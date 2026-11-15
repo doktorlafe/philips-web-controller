@@ -1,0 +1,6 @@
+.env
+agent.key
+data/
+n8n/*.json
+__pycache__/
+*.log

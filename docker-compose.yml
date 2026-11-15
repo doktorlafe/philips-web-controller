@@ -1,0 +1,13 @@
+services:
+  zarovka:
+    build: .
+    container_name: zarovka
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./data:/data
+    networks: [thugsclub]
+networks:
+  thugsclub:
+    name: thugsclub-app_default
+    external: true

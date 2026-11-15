@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="room" cx="72%" cy="38%" r="75%">
+      <stop offset="0" stop-color="#ffb35c" stop-opacity=".55"/>
+      <stop offset=".45" stop-color="#7a4a1e" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#1c1916" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bulb" cx="42%" cy="36%" r="65%">
+      <stop offset="0" stop-color="#fffaf0"/>
+      <stop offset=".45" stop-color="#ffd28a"/>
+      <stop offset="1" stop-color="#ff9d3c"/>
+    </radialGradient>
+    <filter id="blur" x="-1" y="-1" width="3" height="3"><feGaussianBlur stdDeviation="55"/></filter>
+  </defs>
+  <rect width="1200" height="630" fill="#1c1916"/>
+  <rect width="1200" height="630" fill="url(#room)"/>
+  <line x1="860" y1="0" x2="860" y2="170" stroke="#4b4540" stroke-width="4"/>
+  <rect x="822" y="160" width="76" height="52" rx="8" fill="#5b544d"/>
+  <circle cx="860" cy="320" r="150" fill="#ffb35c" opacity=".7" filter="url(#blur)"/>
+  <circle cx="860" cy="320" r="118" fill="url(#bulb)"/>
+  <text x="80" y="250" font-family="Bricolage Grotesque" font-weight="800" font-size="104" letter-spacing="-3" fill="#efe8dd">Moje žárovka.</text>
+  <text x="80" y="340" font-family="Bricolage Grotesque" font-weight="400" font-size="64" letter-spacing="-1" fill="#a39887">Tvoje ruce.</text>
+  <text x="80" y="460" font-family="Bricolage Grotesque" font-weight="600" font-size="34" fill="#efe8dd">Rozsviť skutečnou žárovku v mém pokojíčku</text>
+  <text x="80" y="508" font-family="Bricolage Grotesque" font-weight="400" font-size="30" fill="#a39887">přes server ve Finsku · zarovka.thugsclub.eu</text>
+</svg>

@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Žárovka v pokojíčku</title>
+<meta name="description" content="Rozsviť skutečnou žárovku v pokojíčku v Česku – přes server ve Finsku.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zarovka.thugsclub.eu/">
+<meta property="og:title" content="Moje žárovka. Tvoje ruce.">
+<meta property="og:description" content="Rozsviť skutečnou žárovku v mém pokojíčku – přes server ve Finsku.">
+<meta property="og:image" content="https://zarovka.thugsclub.eu/og.png">
+<meta property="og:image:secure_url" content="https://zarovka.thugsclub.eu/og.png"><meta property="og:image:type" content="image/png"><meta property="og:image:alt" content="Svítící žárovka a nápis Moje žárovka. Tvoje ruce."><meta property="og:site_name" content="Žárovka v pokojíčku">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:locale" content="cs_CZ">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#1c1916">
+<link rel="icon" type="image/png" href="/icon.png"><link rel="apple-touch-icon" href="/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --room:#1c1916;      /* tma v pokoji */
+  --wall:#27231f;      /* omítka */
+  --line:#3a342e;
+  --ink:#efe8dd;
+  --dim:#a39887;
+  --glow:255,200,120;  /* živá barva žárovky, přepisuje JS */
+  --lit:0;             /* 0 zhasnuto, 1 svítí */
+}
+*{box-sizing:border-box}
+html{background:var(--room)}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:17px;line-height:1.5;
+  background:
+    radial-gradient(ellipse 70% 55% at 30% 18%, rgba(var(--glow),calc(.38*var(--lit))) 0%, transparent 70%),
+    var(--room);
+  transition:background 1.2s ease}
+.wrap{max-width:1080px;margin:0 auto;padding:40px 24px 64px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:56px}
+@media (max-width:820px){.wrap{grid-template-columns:1fr;gap:40px;padding:24px 16px 48px}}
+
+h1{font-size:clamp(40px,6vw,68px);line-height:.95;font-weight:800;letter-spacing:-.03em;margin:0 0 18px;font-variation-settings:"opsz" 96}
+h1 small{display:block;font-size:.42em;font-weight:400;letter-spacing:-.01em;color:var(--dim);margin-top:10px;line-height:1.2}
+.lead{color:var(--dim);max-width:46ch;margin:0 0 28px}
+
+/* žárovka */
+.lamp{position:relative;height:260px;display:flex;justify-content:center;align-items:flex-start}
+.cord{position:absolute;top:-40px;left:50%;width:2px;height:96px;background:var(--line);transform:translateX(-50%)}
+.bulb{position:relative;margin-top:56px;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, rgba(255,255,255,calc(.85*var(--lit))) 0%, rgba(var(--glow),calc(.25 + .75*var(--lit))) 45%, rgba(var(--glow),calc(.08 + .5*var(--lit))) 100%);
+  box-shadow:0 0 calc(140px*var(--lit)) calc(30px*var(--lit)) rgba(var(--glow),.55), inset 0 -8px 20px #0004;
+  transition:all 1s ease}
+.bulb::before{content:"";position:absolute;top:-30px;left:50%;transform:translateX(-50%);width:62px;height:40px;border-radius:6px 6px 2px 2px;background:linear-gradient(90deg,#4b4540,#6b635b,#4b4540)}
+.flash .bulb{animation:pulse .7s ease}
+@keyframes pulse{40%{transform:scale(1.07)}}
+.status{text-align:center;color:var(--dim);font-size:15px;min-height:1.5em}
+.status b{color:var(--ink);font-weight:600}
+
+/* ovládání */
+.panel{background:var(--wall);border:1px solid var(--line);border-radius:22px;padding:22px}
+.switch{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);border-radius:14px;padding:14px;background:transparent;color:var(--ink);font-weight:600;transition:background .2s,border-color .2s}
+button:hover:not(:disabled){border-color:var(--dim)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid rgb(var(--glow));outline-offset:3px}
+button.on{background:rgb(255,214,140);color:#2a1c05;border-color:transparent}
+button:disabled{opacity:.4;cursor:not-allowed}
+.row{margin:18px 0 0}
+.row span{display:flex;justify-content:space-between;font-size:15px;color:var(--dim);margin-bottom:6px}
+.row output{color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:12px;border-radius:6px;background:var(--line);margin:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--ink);border:3px solid var(--room);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--ink);border:3px solid var(--room);cursor:pointer}
+#hue{background:linear-gradient(90deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)}
+#dim{background:linear-gradient(90deg,#3a342e,#fff3d6)}
+#temp{background:linear-gradient(90deg,#ffb35c,#fff4e0,#cfe0ff)}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.scenes{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.scenes button{padding:7px 12px;border-radius:999px;font-size:14px;font-weight:400}
+.row small{font-size:13px}
+.swatches{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.swatches button{width:40px;height:40px;padding:0;border-radius:50%;border:2px solid var(--line)}
+details{margin-top:18px;color:var(--dim);font-size:15px}
+summary{cursor:pointer}
+.rgb{display:grid;grid-template-columns:20px 1fr 36px;gap:10px;align-items:center;margin-top:10px}
+.rgb output{text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+#r{background:linear-gradient(90deg,#000,#f00)}#g{background:linear-gradient(90deg,#000,#0f0)}#b{background:linear-gradient(90deg,#000,#00f)}
+.cool{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;padding:14px max(16px,calc((100% - 1032px)/2));background:rgba(28,25,22,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);font-size:22px;font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.alert{position:sticky;top:0;z-index:6;padding:14px 16px;text-align:center;font-weight:800;font-size:18px;background:#7a1f1f;color:#fff}
+.alert small{display:block;font-weight:400;font-size:14px;opacity:.85}
+.cool.locked{color:rgb(var(--glow))}
+.cool i{flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.cool i::after{content:"";display:block;height:100%;width:calc(var(--p,1)*100%);background:rgb(var(--glow));transition:width 1s linear}
+
+/* cesta signálu */
+h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0 0 14px}
+.route{display:grid;grid-template-columns:repeat(4,auto);justify-content:space-between;align-items:start;position:relative;margin:0 0 40px;padding-top:4px}
+.route::before{content:"";position:absolute;left:24px;right:24px;top:26px;height:2px;background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 12px)}
+.hop{position:relative;text-align:center;font-size:14px;color:var(--dim);width:76px}
+.hop b{display:grid;place-items:center;width:46px;height:46px;margin:0 auto 6px;border-radius:50%;background:var(--wall);border:1px solid var(--line);font-size:22px;font-weight:400}
+.packet{position:absolute;top:21px;left:24px;width:12px;height:12px;border-radius:50%;background:rgb(var(--glow));box-shadow:0 0 14px rgb(var(--glow));opacity:0}
+.packet.go{animation:travel 1.4s cubic-bezier(.5,0,.3,1)}
+@keyframes travel{0%{left:24px;opacity:1}95%{opacity:1}100%{left:calc(100% - 36px);opacity:0}}
+
+/* deník */
+.chat{margin:0 0 40px}
+.msgs{list-style:none;margin:0 0 10px;padding:4px 14px;height:300px;overflow:auto;background:var(--wall);border:1px solid var(--line);border-radius:18px}
+.msgs li{padding:8px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:24px 1fr auto;gap:10px;align-items:start}
+.msgs li:first-child{border-top:0}
+.msgs .f{font-size:18px;line-height:1.3}
+.msgs .n{font-weight:600}.msgs .n.adm{color:rgb(255,214,140)}
+.msgs .x{overflow-wrap:anywhere}
+.msgs time{color:var(--dim);font-size:13px;white-space:nowrap}
+.msgs .del{border:0;padding:0 4px;color:var(--dim);font-size:13px;font-weight:400}
+#chatForm{display:grid;grid-template-columns:110px 1fr auto;gap:8px}
+#chatForm input{font:inherit;color:var(--ink);background:var(--wall);border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
+#chatForm button{padding:12px 16px}
+@media (max-width:480px){#chatForm{grid-template-columns:1fr auto}#nick{grid-column:1/-1}}
+.chatErr{color:var(--dim);font-size:14px;min-height:1.4em;margin:6px 0 0}
+.log{list-style:none;margin:0;padding:0;max-height:520px;overflow:auto}
+.log li{display:grid;grid-template-columns:32px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.log li:first-child{border-top:0}
+.log .f{font-size:24px;line-height:1}
+.log .w{display:flex;align-items:center;gap:8px;font-weight:600}
+.log .dot{width:12px;height:12px;border-radius:50%;flex:none;border:1px solid #fff3}
+.log .ip{color:var(--dim);font-size:14px;font-variant-numeric:tabular-nums;word-break:break-all}
+.log time{color:var(--dim);font-size:14px;white-space:nowrap}
+.empty{color:var(--dim)}
+.log .adm{color:rgb(255,214,140);font-weight:600}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="cool" id="cool" aria-live="polite"><span id="coolT">Můžeš ovládat</span><i></i></div>
+<div class="alert" id="alert" hidden></div>
+<main class="wrap">
+  <section>
+    <h1>Moje žárovka.<small>Tvoje ruce.</small></h1>
+    <p class="lead">Tohle je skutečná Philips WiZ žárovka v mém pokojíčku v Česku. Kliknutí letí na server ve Finsku, odtud do mojí domácí sítě a rovnou do žárovky. Do vteřiny se rozsvítí, zhasne nebo změní barvu.</p>
+
+    <div class="lamp" id="lamp"><div class="cord"></div><div class="bulb"></div></div>
+    <p class="status" id="status" aria-live="polite">Připojuju se…</p>
+
+    <div class="panel">
+      <div class="switch">
+        <button id="onBtn" data-cmd='{"on":true}'>Rozsvítit</button>
+        <button id="offBtn" data-cmd='{"on":false}'>Zhasnout</button>
+      </div>
+
+      <label class="row"><span>Barva</span><input type="range" id="hue" min="0" max="359" value="30"></label>
+      <div class="swatches" aria-label="Rychlé barvy">
+        <button title="Teplá bílá" style="background:#ffd29a" data-cmd='{"on":true,"temp":2700}'></button>
+        <button title="Červená" style="background:#ff2a2a" data-cmd='{"on":true,"color":"#ff0000"}'></button>
+        <button title="Zelená" style="background:#2ee05a" data-cmd='{"on":true,"color":"#00ff00"}'></button>
+        <button title="Modrá" style="background:#2f6bff" data-cmd='{"on":true,"color":"#0000ff"}'></button>
+        <button title="Fialová" style="background:#b04cff" data-cmd='{"on":true,"color":"#a000ff"}'></button>
+        <button title="Růžová" style="background:#ff4fa8" data-cmd='{"on":true,"color":"#ff0080"}'></button>
+      </div>
+
+
+      <div class="row"><span>Efekty <small>20 s, pak teplá bílá</small></span></div>
+      <div class="modes">
+        <button data-cmd='{"effect":"rainbow"}'>🌈 Duha</button>
+        <button data-cmd='{"effect":"strobe"}'>⚡ Stroboskop</button>
+        <button data-cmd='{"effect":"police"}'>🚨 Policie</button>
+        <button data-cmd='{"effect":"breathe"}'>🫁 Dýchání</button>
+      </div>
+      <label class="row"><span>Scény WiZ <span>rychlost <output id="spdV">100</output></span></span><input type="range" id="spd" min="20" max="200" value="100"></label>
+      <div class="scenes" id="scenes"></div>
+      <label class="row"><span>Jas <output id="dimV">80 %</output></span><input type="range" id="dim" min="10" max="100" value="80"></label>
+      <label class="row"><span>Teplota bílé <output id="tempV">3000 K</output></span><input type="range" id="temp" min="2200" max="6500" step="100" value="3000"></label>
+
+      <details>
+        <summary>Přesná barva RGB</summary>
+        <div class="rgb">R<input type="range" id="r" min="0" max="255" value="255"><output id="rV">255</output></div>
+        <div class="rgb">G<input type="range" id="g" min="0" max="255" value="170"><output id="gV">170</output></div>
+        <div class="rgb">B<input type="range" id="b" min="0" max="255" value="68"><output id="bV">68</output></div>
+      </details>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>Cesta kliknutí</h2>
+    <div class="route" aria-hidden="true">
+      <div class="hop"><b>👆</b>ty</div>
+      <div class="hop"><b>🇫🇮</b>server ve Finsku</div>
+      <div class="hop"><b>🇨🇿</b>můj pokojíček</div>
+      <div class="hop"><b>💡</b>žárovka</div>
+      <span class="packet" id="packet"></span>
+    </div>
+
+    <h2>Chat</h2>
+    <div class="chat">
+      <ul class="msgs" id="msgs" aria-live="polite"><li class="empty">Zatím ticho. Napiš první zprávu.</li></ul>
+      <form id="chatForm" autocomplete="off">
+        <input id="nick" maxlength="24" placeholder="Jméno" aria-label="Jméno">
+        <input id="msg" maxlength="300" placeholder="Napiš zprávu…" aria-label="Zpráva" required>
+        <button type="submit">Poslat</button>
+      </form>
+      <p class="chatErr" id="chatErr" role="status"></p>
+    </div>
+
+    <h2>Kdo co udělal</h2>
+    <ul class="log" id="log"><li class="empty">Zatím nikdo. Buď první.</li></ul>
+  </section>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const root = document.documentElement.style;
+const esc = s => String(s).replace(/[&<>"']/g, c => '&#' + c.charCodeAt(0) + ';');
+const hex = (r, g, b) => '#' + [r, g, b].map(v => (+v).toString(16).padStart(2, '0')).join('');
+const kelvin = k => { const t = (k - 2200) / 4300; return [255, Math.round(180 + 60 * t), Math.round(110 + 145 * t)]; };
+const SCENE_NAMES={};setTimeout(()=>SCENES.forEach(([i,n])=>SCENE_NAMES[i]=n));
+let offline = false;
+let until = 0, cooldown = 120000;
+
+function hueRgb(h) { const f = n => { const k = (n + h / 60) % 6; return Math.round(255 * (1 - Math.max(0, Math.min(k, 4 - k, 1)))); }; return [f(5), f(3), f(1)]; }
+function setRgbSliders(r, g, b) { [['r', r], ['g', g], ['b', b]].forEach(([k, v]) => { $(k).value = v; $(k + 'V').textContent = v; }); }
+
+async function send(cmd) {
+  if (until > Date.now()) return;
+  $('packet').classList.remove('go'); void $('packet').offsetWidth; $('packet').classList.add('go');
+  try {
+    const r = await fetch('/api/cmd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cmd) });
+    const j = await r.json();
+    if (j.wait) { until = Date.now() + j.wait; cooldown = Math.max(j.wait, 1); }
+    $('status').textContent = j.error || 'Posláno. Za chvilku to uvidíš.';
+    if (!j.error) { $('lamp').classList.remove('flash'); void $('lamp').offsetWidth; $('lamp').classList.add('flash'); }
+  } catch { $('status').textContent = 'Server neodpovídá. Zkus to znovu.'; }
+  setTimeout(load, 1600);
+}
+
+const SCENES=[[4,'🎉 Párty'],[26,'🪩 Klub'],[1,'🌊 Oceán'],[3,'🌅 Západ slunce'],[5,'🔥 Krb'],[29,'🕯️ Svíčka'],[7,'🌲 Les'],[24,'🌴 Džungle'],[25,'🍹 Mojito'],[8,'🖍️ Pastelky'],[2,'💕 Romantika'],[23,'🐠 Hlubina'],[20,'🌸 Jaro'],[21,'☀️ Léto'],[22,'🍂 Podzim'],[27,'🎄 Vánoce'],[28,'🎃 Halloween'],[31,'💓 Pulz'],[32,'⚙️ Steampunk'],[16,'😌 Relax'],[15,'🎯 Soustředění'],[14,'🌙 Noční světlo']];
+$('scenes').innerHTML=SCENES.map(([id,n])=>'<button data-scene="'+id+'">'+n+'</button>').join('');
+document.querySelectorAll('[data-scene]').forEach(b=>b.addEventListener('click',()=>send({scene:+b.dataset.scene,speed:+$('spd').value})));
+$('spd').addEventListener('input',e=>$('spdV').textContent=e.target.value);
+document.querySelectorAll('[data-cmd]').forEach(b => b.addEventListener('click', () => send(JSON.parse(b.dataset.cmd))));
+$('hue').addEventListener('input', e => { const c = hueRgb(+e.target.value); setRgbSliders(...c); });
+$('hue').addEventListener('change', () => send({ on: true, color: hex($('r').value, $('g').value, $('b').value) }));
+['r', 'g', 'b'].forEach(k => {
+  $(k).addEventListener('input', () => $(k + 'V').textContent = $(k).value);
+  $(k).addEventListener('change', () => send({ on: true, color: hex($('r').value, $('g').value, $('b').value) }));
+});
+$('dim').addEventListener('input', e => $('dimV').textContent = e.target.value + ' %');
+$('dim').addEventListener('change', e => send({ on: true, dimming: +e.target.value }));
+$('temp').addEventListener('input', e => $('tempV').textContent = e.target.value + ' K');
+$('temp').addEventListener('change', e => send({ on: true, temp: +e.target.value }));
+
+function tick() {
+  const w = until - Date.now(), locked = w > 0;
+  document.querySelectorAll('.panel button,.panel input').forEach(el => el.disabled = locked || offline);
+  $('coolT').textContent = locked ? '⏳ Další akce za ' + Math.floor(w / 60000) + ':' + String(Math.floor(w / 1000) % 60).padStart(2, '0') : '✅ Můžeš ovládat';
+  $('cool').style.setProperty('--p', locked ? 1 - w / cooldown : 1);
+  $('cool').classList.toggle('locked', locked);
+}
+setInterval(tick, 1000);
+
+function ago(t) {
+  const s = (Date.now() - new Date(t)) / 1000;
+  if (s < 60) return 'teď';
+  if (s < 3600) return Math.floor(s / 60) + ' min';
+  if (s < 86400) return Math.floor(s / 3600) + ' h';
+  return new Date(t).toLocaleDateString('cs');
+}
+function dotColor(h) {
+  const m = h.what.match(/#[0-9a-f]{6}/i); if (m) return m[0];
+  const k = h.what.match(/(\d+) K/); if (k) return hex(...kelvin(+k[1]));
+  return h.what.startsWith('vypnul') ? '#000' : '#ffd29a';
+}
+
+async function load() {
+  try {
+    const s = await (await fetch('/api/state', { cache: 'no-store' })).json();
+    if (s.wait > until - Date.now()) until = Date.now() + s.wait;
+    isAdmin = s.me === 'admin'; if (s.chat) renderChat(s.chat);
+    offline = !s.online || !s.bulbOk;
+    $('alert').hidden = !offline; $('cool').hidden = offline;
+    if (!s.online) $('alert').innerHTML = '🔌 Lafeho počítač je vypnutý<small>Žárovku teď nejde ovládat. Zkus to později.</small>';
+    else if (!s.bulbOk) $('alert').innerHTML = '💡 Žárovka neodpovídá<small>Nejspíš je vypnutá vypínačem. Zkus to později.</small>';
+    if (offline) {
+      root.setProperty('--lit', 0);
+      $('status').innerHTML = '<b>Offline</b>';
+    } else {
+      let rgb = s.r != null && (s.r || s.g || s.b) ? [s.r, s.g, s.b] : s.temp ? kelvin(s.temp) : [255, 200, 120];
+      root.setProperty('--glow', rgb.join(','));
+      root.setProperty('--lit', s.state ? Math.max(.35, (s.dimming || 100) / 100) : 0);
+      $('status').innerHTML = s.state && s.sceneId && SCENE_NAMES[s.sceneId] ? '<b>' + SCENE_NAMES[s.sceneId] + '</b>' : s.state ? '<b>Svítí</b> na ' + (s.dimming || 100) + ' %' : '<b>Zhasnuto</b>';
+      $('onBtn').classList.toggle('on', !!s.state);
+    }
+    $('log').innerHTML = s.log && s.log.length ? s.log.map(h =>
+      '<li><span class="f" title="' + esc(h.cc) + '">' + h.flag + '</span>' +
+      '<div><div class="w"><span class="dot" style="background:' + dotColor(h) + '"></span>' + esc(h.what) + '</div>' +
+      '<div class="ip' + (h.admin ? ' adm' : '') + '">' + esc(h.ip) + '</div></div>' +
+      '<time datetime="' + esc(h.t) + '" title="' + new Date(h.t).toLocaleString('cs') + '">' + ago(h.t) + '</time></li>').join('')
+      : '<li class="empty">Zatím nikdo. Buď první.</li>';
+  } catch { $('status').textContent = 'Nedaří se načíst stav. Zkouším to dál.'; }
+  tick();
+}
+let lastChatId = '', isAdmin = false;
+function renderChat(list) {
+  const box = $('msgs'), atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 40;
+  const key = list.map(m => m.id).join();
+  if (key === lastChatId) return; lastChatId = key;
+  box.innerHTML = list.length ? list.map(m =>
+    '<li><span class="f" title="' + esc(m.cc) + '">' + m.flag + '</span><div><span class="n' + (m.admin ? ' adm' : '') + '">' + esc(m.name) + '</span> <span class="x">' + esc(m.text) + '</span></div>' +
+    '<span><time title="' + new Date(m.t).toLocaleString('cs') + '">' + ago(m.t) + '</time>' + (isAdmin ? ' <button class="del" data-id="' + esc(m.id) + '" title="Smazat">✕</button>' : '') + '</span></li>').join('')
+    : '<li class="empty">Zatím ticho. Napiš první zprávu.</li>';
+  if (atBottom || !box.dataset.init) { box.scrollTop = box.scrollHeight; box.dataset.init = 1; }
+}
+$('msgs').addEventListener('click', async e => {
+  const id = e.target.dataset && e.target.dataset.id; if (!id) return;
+  await fetch('/api/chat/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
+  load();
+});
+try { $('nick').value = localStorage.getItem('nick') || ''; } catch {}
+$('chatForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const text = $('msg').value.trim(); if (!text) return;
+  try { localStorage.setItem('nick', $('nick').value); } catch {}
+  try {
+    const r = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: $('nick').value, text }) });
+    const j = await r.json();
+    $('chatErr').textContent = j.error || '';
+    if (!j.error) { $('msg').value = ''; $('msgs').dataset.init = ''; load(); }
+  } catch { $('chatErr').textContent = 'Zprávu se nepodařilo odeslat. Zkus to znovu.'; }
+});
+load(); setInterval(load, 5000);
+</script>
+</body>
+</html>
