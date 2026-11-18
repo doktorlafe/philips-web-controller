@@ -1,7 +1,6 @@
 
 # 💡 Philips Web Controller
 
-
 <img width="1115" height="1156" alt="image" src="https://github.com/user-attachments/assets/6853b7c3-8a95-4f84-b6dc-d5a691dab0b6" />
 
 A public website that lets anyone on the internet control a real Philips WiZ bulb in my room.
