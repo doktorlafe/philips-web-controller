@@ -1,7 +1,7 @@
 
 # 💡 Philips Web Controller
 
-<img width="1115" height="1156" alt="image" src="https://github.com/user-attachments/assets/6853b7c3-8a95-4f84-b6dc-d5a691dab0b6" />
+<img width="2048" height="2048" alt="Gemini_Generated_Image_6sqi2u6sqi2u6sqi" src="https://github.com/user-attachments/assets/6073cf72-d7e8-47ed-acd7-9183a65a6dc4" />
 
 A public website that lets anyone on the internet control a real Philips WiZ bulb in my room.
 A click goes to a server in Finland, then to a small agent on my home PC, which sends the command to the bulb over the LAN (UDP 38899).
