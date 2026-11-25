@@ -87,6 +87,7 @@ summary{cursor:pointer}
 .alert{position:sticky;top:0;z-index:6;padding:14px 16px;text-align:center;font-weight:800;font-size:18px;background:#7a1f1f;color:#fff}
 .alert small{display:block;font-weight:400;font-size:14px;opacity:.85}
 .cool.locked{color:rgb(var(--glow))}
+.lang{font:inherit;font-size:14px;font-weight:600;padding:6px 10px;border-radius:999px;order:2}
 .cool i{flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
 .cool i::after{content:"";display:block;height:100%;width:calc(var(--p,1)*100%);background:rgb(var(--glow));transition:width 1s linear}
 
@@ -129,47 +130,47 @@ h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0 0 14px}
 </style>
 </head>
 <body>
-<div class="cool" id="cool" aria-live="polite"><span id="coolT">Můžeš ovládat</span><i></i></div>
+<div class="cool" id="cool" aria-live="polite"><span id="coolT">Můžeš ovládat</span><i></i><button class="lang" id="lang" type="button" aria-label="Switch language">EN</button></div>
 <div class="alert" id="alert" hidden></div>
 <main class="wrap">
   <section>
-    <h1>Moje žárovka.<small>Tvoje ruce.</small></h1>
-    <p class="lead">Tohle je skutečná Philips WiZ žárovka v mém pokojíčku v Česku. Kliknutí letí na server ve Finsku, odtud do mojí domácí sítě a rovnou do žárovky. Do vteřiny se rozsvítí, zhasne nebo změní barvu.</p>
+    <h1 data-i18n="h1">Moje žárovka.<small>Tvoje ruce.</small></h1>
+    <p class="lead" data-i18n="lead">Tohle je skutečná Philips WiZ žárovka v mém pokojíčku v Česku. Kliknutí letí na server ve Finsku, odtud do mojí domácí sítě a rovnou do žárovky. Do vteřiny se rozsvítí, zhasne nebo změní barvu.</p>
 
     <div class="lamp" id="lamp"><div class="cord"></div><div class="bulb"></div></div>
-    <p class="status" id="status" aria-live="polite">Připojuju se…</p>
+    <p class="status" id="status" aria-live="polite" data-i18n="connecting">Připojuju se…</p>
 
     <div class="panel">
       <div class="switch">
-        <button id="onBtn" data-cmd='{"on":true}'>Rozsvítit</button>
-        <button id="offBtn" data-cmd='{"on":false}'>Zhasnout</button>
+        <button id="onBtn" data-cmd='{"on":true}' data-i18n="on">Rozsvítit</button>
+        <button id="offBtn" data-cmd='{"on":false}' data-i18n="off">Zhasnout</button>
       </div>
 
-      <label class="row"><span>Barva</span><input type="range" id="hue" min="0" max="359" value="30"></label>
-      <div class="swatches" aria-label="Rychlé barvy">
-        <button title="Teplá bílá" style="background:#ffd29a" data-cmd='{"on":true,"temp":2700}'></button>
-        <button title="Červená" style="background:#ff2a2a" data-cmd='{"on":true,"color":"#ff0000"}'></button>
-        <button title="Zelená" style="background:#2ee05a" data-cmd='{"on":true,"color":"#00ff00"}'></button>
-        <button title="Modrá" style="background:#2f6bff" data-cmd='{"on":true,"color":"#0000ff"}'></button>
-        <button title="Fialová" style="background:#b04cff" data-cmd='{"on":true,"color":"#a000ff"}'></button>
-        <button title="Růžová" style="background:#ff4fa8" data-cmd='{"on":true,"color":"#ff0080"}'></button>
+      <label class="row"><span data-i18n="color">Barva</span><input type="range" id="hue" min="0" max="359" value="30"></label>
+      <div class="swatches" aria-label="Rychlé barvy" data-i18n-aria="swatches">
+        <button title="Teplá bílá" data-i18n-title="warm" style="background:#ffd29a" data-cmd='{"on":true,"temp":2700}'></button>
+        <button title="Červená" data-i18n-title="red" style="background:#ff2a2a" data-cmd='{"on":true,"color":"#ff0000"}'></button>
+        <button title="Zelená" data-i18n-title="green" style="background:#2ee05a" data-cmd='{"on":true,"color":"#00ff00"}'></button>
+        <button title="Modrá" data-i18n-title="blue" style="background:#2f6bff" data-cmd='{"on":true,"color":"#0000ff"}'></button>
+        <button title="Fialová" data-i18n-title="purple" style="background:#b04cff" data-cmd='{"on":true,"color":"#a000ff"}'></button>
+        <button title="Růžová" data-i18n-title="pink" style="background:#ff4fa8" data-cmd='{"on":true,"color":"#ff0080"}'></button>
       </div>
 
 
-      <div class="row"><span>Efekty <small>20 s, pak teplá bílá</small></span></div>
+      <div class="row"><span data-i18n="effects">Efekty <small>20 s, pak teplá bílá</small></span></div>
       <div class="modes">
-        <button data-cmd='{"effect":"rainbow"}'>🌈 Duha</button>
-        <button data-cmd='{"effect":"strobe"}'>⚡ Stroboskop</button>
-        <button data-cmd='{"effect":"police"}'>🚨 Policie</button>
-        <button data-cmd='{"effect":"breathe"}'>🫁 Dýchání</button>
+        <button data-cmd='{"effect":"rainbow"}' data-i18n="rainbow">🌈 Duha</button>
+        <button data-cmd='{"effect":"strobe"}' data-i18n="strobe">⚡ Stroboskop</button>
+        <button data-cmd='{"effect":"police"}' data-i18n="police">🚨 Policie</button>
+        <button data-cmd='{"effect":"breathe"}' data-i18n="breathe">🫁 Dýchání</button>
       </div>
-      <label class="row"><span>Scény WiZ <span>rychlost <output id="spdV">100</output></span></span><input type="range" id="spd" min="20" max="200" value="100"></label>
+      <label class="row"><span><span data-i18n="scenes">Scény WiZ</span> <span><span data-i18n="speed">rychlost</span> <output id="spdV">100</output></span></span><input type="range" id="spd" min="20" max="200" value="100"></label>
       <div class="scenes" id="scenes"></div>
-      <label class="row"><span>Jas <output id="dimV">80 %</output></span><input type="range" id="dim" min="10" max="100" value="80"></label>
-      <label class="row"><span>Teplota bílé <output id="tempV">3000 K</output></span><input type="range" id="temp" min="2200" max="6500" step="100" value="3000"></label>
+      <label class="row"><span><span data-i18n="bright">Jas</span> <output id="dimV">80 %</output></span><input type="range" id="dim" min="10" max="100" value="80"></label>
+      <label class="row"><span><span data-i18n="tempL">Teplota bílé</span> <output id="tempV">3000 K</output></span><input type="range" id="temp" min="2200" max="6500" step="100" value="3000"></label>
 
       <details>
-        <summary>Přesná barva RGB</summary>
+        <summary data-i18n="rgb">Přesná barva RGB</summary>
         <div class="rgb">R<input type="range" id="r" min="0" max="255" value="255"><output id="rV">255</output></div>
         <div class="rgb">G<input type="range" id="g" min="0" max="255" value="170"><output id="gV">170</output></div>
         <div class="rgb">B<input type="range" id="b" min="0" max="255" value="68"><output id="bV">68</output></div>
@@ -179,28 +180,28 @@ h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0 0 14px}
   </section>
 
   <section>
-    <h2>Cesta kliknutí</h2>
+    <h2 data-i18n="route">Cesta kliknutí</h2>
     <div class="route" aria-hidden="true">
-      <div class="hop"><b>👆</b>ty</div>
-      <div class="hop"><b>🇫🇮</b>server ve Finsku</div>
-      <div class="hop"><b>🇨🇿</b>můj pokojíček</div>
-      <div class="hop"><b>💡</b>žárovka</div>
+      <div class="hop"><b>👆</b><span data-i18n="hopYou">ty</span></div>
+      <div class="hop"><b>🇫🇮</b><span data-i18n="hopFi">server ve Finsku</span></div>
+      <div class="hop"><b>🇨🇿</b><span data-i18n="hopCz">můj pokojíček</span></div>
+      <div class="hop"><b>💡</b><span data-i18n="hopBulb">žárovka</span></div>
       <span class="packet" id="packet"></span>
     </div>
 
     <h2>Chat</h2>
     <div class="chat">
-      <ul class="msgs" id="msgs" aria-live="polite"><li class="empty">Zatím ticho. Napiš první zprávu.</li></ul>
+      <ul class="msgs" id="msgs" aria-live="polite"><li class="empty" data-i18n="chatEmpty">Zatím ticho. Napiš první zprávu.</li></ul>
       <form id="chatForm" autocomplete="off">
-        <input id="nick" maxlength="24" placeholder="Jméno" aria-label="Jméno">
-        <input id="msg" maxlength="300" placeholder="Napiš zprávu…" aria-label="Zpráva" required>
-        <button type="submit">Poslat</button>
+        <input id="nick" maxlength="24" placeholder="Jméno" aria-label="Jméno" data-i18n-ph="nick">
+        <input id="msg" maxlength="300" placeholder="Napiš zprávu…" aria-label="Zpráva" data-i18n-ph="msg" required>
+        <button type="submit" data-i18n="sendBtn">Poslat</button>
       </form>
       <p class="chatErr" id="chatErr" role="status"></p>
     </div>
 
-    <h2>Kdo co udělal</h2>
-    <ul class="log" id="log"><li class="empty">Zatím nikdo. Buď první.</li></ul>
+    <h2 data-i18n="logH">Kdo co udělal</h2>
+    <ul class="log" id="log"><li class="empty" data-i18n="logEmpty">Zatím nikdo. Buď první.</li></ul>
   </section>
 </main>
 <script>
@@ -209,7 +210,57 @@ const root = document.documentElement.style;
 const esc = s => String(s).replace(/[&<>"']/g, c => '&#' + c.charCodeAt(0) + ';');
 const hex = (r, g, b) => '#' + [r, g, b].map(v => (+v).toString(16).padStart(2, '0')).join('');
 const kelvin = k => { const t = (k - 2200) / 4300; return [255, Math.round(180 + 60 * t), Math.round(110 + 145 * t)]; };
-const SCENE_NAMES={};setTimeout(()=>SCENES.forEach(([i,n])=>SCENE_NAMES[i]=n));
+const I18N = {
+  cs: {
+    h1: 'Moje žárovka.<small>Tvoje ruce.</small>',
+    lead: 'Tohle je skutečná Philips WiZ žárovka v mém pokojíčku v Česku. Kliknutí letí na server ve Finsku, odtud do mojí domácí sítě a rovnou do žárovky. Do vteřiny se rozsvítí, zhasne nebo změní barvu.',
+    connecting: 'Připojuju se…', on: 'Rozsvítit', off: 'Zhasnout', color: 'Barva', swatches: 'Rychlé barvy',
+    warm: 'Teplá bílá', red: 'Červená', green: 'Zelená', blue: 'Modrá', purple: 'Fialová', pink: 'Růžová',
+    effects: 'Efekty <small>20 s, pak teplá bílá</small>', rainbow: '🌈 Duha', strobe: '⚡ Stroboskop', police: '🚨 Policie', breathe: '🫁 Dýchání',
+    scenes: 'Scény WiZ', speed: 'rychlost', bright: 'Jas', tempL: 'Teplota bílé', rgb: 'Přesná barva RGB',
+    route: 'Cesta kliknutí', hopYou: 'ty', hopFi: 'server ve Finsku', hopCz: 'můj pokojíček', hopBulb: 'žárovka',
+    chatEmpty: 'Zatím ticho. Napiš první zprávu.', nick: 'Jméno', msg: 'Napiš zprávu…', sendBtn: 'Poslat',
+    logH: 'Kdo co udělal', logEmpty: 'Zatím nikdo. Buď první.',
+    sent: 'Posláno. Za chvilku to uvidíš.', noServer: 'Server neodpovídá. Zkus to znovu.',
+    next: '⏳ Další akce za ', canCtl: '✅ Můžeš ovládat', now: 'teď',
+    pcOff: '🔌 Lafeho počítač je vypnutý<small>Žárovku teď nejde ovládat. Zkus to později.</small>',
+    bulbOff: '💡 Žárovka neodpovídá<small>Nejspíš je vypnutá vypínačem. Zkus to později.</small>',
+    lit: '<b>Svítí</b> na ', dark: '<b>Zhasnuto</b>', loadErr: 'Nedaří se načíst stav. Zkouším to dál.',
+    del: 'Smazat', chatFail: 'Zprávu se nepodařilo odeslat. Zkus to znovu.'
+  },
+  en: {
+    h1: 'My light bulb.<small>Your hands.</small>',
+    lead: 'This is a real Philips WiZ bulb in my little room in Czechia. Your click flies to a server in Finland, from there into my home network and straight into the bulb. Within a second it turns on, off, or changes colour.',
+    connecting: 'Connecting…', on: 'Turn on', off: 'Turn off', color: 'Colour', swatches: 'Quick colours',
+    warm: 'Warm white', red: 'Red', green: 'Green', blue: 'Blue', purple: 'Purple', pink: 'Pink',
+    effects: 'Effects <small>20 s, then warm white</small>', rainbow: '🌈 Rainbow', strobe: '⚡ Strobe', police: '🚨 Police', breathe: '🫁 Breathing',
+    scenes: 'WiZ scenes', speed: 'speed', bright: 'Brightness', tempL: 'White temperature', rgb: 'Exact RGB colour',
+    route: 'Path of a click', hopYou: 'you', hopFi: 'server in Finland', hopCz: 'my room', hopBulb: 'bulb',
+    chatEmpty: 'Quiet so far. Write the first message.', nick: 'Name', msg: 'Write a message…', sendBtn: 'Send',
+    logH: 'Who did what', logEmpty: 'Nobody yet. Be the first.',
+    sent: 'Sent. You\'ll see it in a moment.', noServer: 'Server not responding. Try again.',
+    next: '⏳ Next action in ', canCtl: '✅ You can control it', now: 'now',
+    pcOff: '🔌 Lafe\'s computer is off<small>The bulb can\'t be controlled right now. Try again later.</small>',
+    bulbOff: '💡 The bulb isn\'t responding<small>It\'s probably switched off at the wall. Try again later.</small>',
+    lit: '<b>On</b> at ', dark: '<b>Off</b>', loadErr: 'Can\'t load the state. Still trying.',
+    del: 'Delete', chatFail: 'Couldn\'t send the message. Try again.'
+  }
+};
+let lang = 'cs';
+try { lang = localStorage.getItem('lang') || (/^cs|^sk/i.test(navigator.language) ? 'cs' : 'en'); } catch {}
+const t = k => I18N[lang][k] ?? I18N.cs[k];
+const SCENE_NAMES = {};
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => el.innerHTML = t(el.dataset.i18n));
+  document.querySelectorAll('[data-i18n-title]').forEach(el => el.title = t(el.dataset.i18nTitle));
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); el.setAttribute('aria-label', t(el.dataset.i18nPh)); });
+  document.querySelectorAll('[data-scene]').forEach(b => b.textContent = SCENE_NAMES[b.dataset.scene]);
+  $('lang').textContent = lang === 'cs' ? 'EN' : 'CZ';
+  document.title = lang === 'cs' ? 'Žárovka v pokojíčku' : 'A light bulb in my room';
+  lastChatId = ''; tick();
+}
 let offline = false;
 let until = 0, cooldown = 120000;
 
@@ -220,17 +271,18 @@ async function send(cmd) {
   if (until > Date.now()) return;
   $('packet').classList.remove('go'); void $('packet').offsetWidth; $('packet').classList.add('go');
   try {
-    const r = await fetch('/api/cmd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cmd) });
+    const r = await fetch('/api/cmd', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Lang': lang }, body: JSON.stringify(cmd) });
     const j = await r.json();
     if (j.wait) { until = Date.now() + j.wait; cooldown = Math.max(j.wait, 1); }
-    $('status').textContent = j.error || 'Posláno. Za chvilku to uvidíš.';
+    $('status').textContent = j.error || t('sent');
     if (!j.error) { $('lamp').classList.remove('flash'); void $('lamp').offsetWidth; $('lamp').classList.add('flash'); }
-  } catch { $('status').textContent = 'Server neodpovídá. Zkus to znovu.'; }
+  } catch { $('status').textContent = t('noServer'); }
   setTimeout(load, 1600);
 }
 
-const SCENES=[[4,'🎉 Párty'],[26,'🪩 Klub'],[1,'🌊 Oceán'],[3,'🌅 Západ slunce'],[5,'🔥 Krb'],[29,'🕯️ Svíčka'],[7,'🌲 Les'],[24,'🌴 Džungle'],[25,'🍹 Mojito'],[8,'🖍️ Pastelky'],[2,'💕 Romantika'],[23,'🐠 Hlubina'],[20,'🌸 Jaro'],[21,'☀️ Léto'],[22,'🍂 Podzim'],[27,'🎄 Vánoce'],[28,'🎃 Halloween'],[31,'💓 Pulz'],[32,'⚙️ Steampunk'],[16,'😌 Relax'],[15,'🎯 Soustředění'],[14,'🌙 Noční světlo']];
-$('scenes').innerHTML=SCENES.map(([id,n])=>'<button data-scene="'+id+'">'+n+'</button>').join('');
+const SCENES=[[4,'🎉 Párty','🎉 Party'],[26,'🪩 Klub','🪩 Club'],[1,'🌊 Oceán','🌊 Ocean'],[3,'🌅 Západ slunce','🌅 Sunset'],[5,'🔥 Krb','🔥 Fireplace'],[29,'🕯️ Svíčka','🕯️ Candle'],[7,'🌲 Les','🌲 Forest'],[24,'🌴 Džungle','🌴 Jungle'],[25,'🍹 Mojito','🍹 Mojito'],[8,'🖍️ Pastelky','🖍️ Pastels'],[2,'💕 Romantika','💕 Romance'],[23,'🐠 Hlubina','🐠 Deep dive'],[20,'🌸 Jaro','🌸 Spring'],[21,'☀️ Léto','☀️ Summer'],[22,'🍂 Podzim','🍂 Autumn'],[27,'🎄 Vánoce','🎄 Christmas'],[28,'🎃 Halloween','🎃 Halloween'],[31,'💓 Pulz','💓 Pulse'],[32,'⚙️ Steampunk','⚙️ Steampunk'],[16,'😌 Relax','😌 Relax'],[15,'🎯 Soustředění','🎯 Focus'],[14,'🌙 Noční světlo','🌙 Night light']];
+function sceneNames() { SCENES.forEach(([i, c, e]) => SCENE_NAMES[i] = lang === 'en' ? e : c); }
+$('scenes').innerHTML=SCENES.map(([id])=>'<button data-scene="'+id+'"></button>').join('');
 document.querySelectorAll('[data-scene]').forEach(b=>b.addEventListener('click',()=>send({scene:+b.dataset.scene,speed:+$('spd').value})));
 $('spd').addEventListener('input',e=>$('spdV').textContent=e.target.value);
 document.querySelectorAll('[data-cmd]').forEach(b => b.addEventListener('click', () => send(JSON.parse(b.dataset.cmd))));
@@ -248,7 +300,7 @@ $('temp').addEventListener('change', e => send({ on: true, temp: +e.target.value
 function tick() {
   const w = until - Date.now(), locked = w > 0;
   document.querySelectorAll('.panel button,.panel input').forEach(el => el.disabled = locked || offline);
-  $('coolT').textContent = locked ? '⏳ Další akce za ' + Math.floor(w / 60000) + ':' + String(Math.floor(w / 1000) % 60).padStart(2, '0') : '✅ Můžeš ovládat';
+  $('coolT').textContent = locked ? t('next') + Math.floor(w / 60000) + ':' + String(Math.floor(w / 1000) % 60).padStart(2, '0') : t('canCtl');
   $('cool').style.setProperty('--p', locked ? 1 - w / cooldown : 1);
   $('cool').classList.toggle('locked', locked);
 }
@@ -256,26 +308,26 @@ setInterval(tick, 1000);
 
 function ago(t) {
   const s = (Date.now() - new Date(t)) / 1000;
-  if (s < 60) return 'teď';
+  if (s < 60) return t('now');
   if (s < 3600) return Math.floor(s / 60) + ' min';
   if (s < 86400) return Math.floor(s / 3600) + ' h';
-  return new Date(t).toLocaleDateString('cs');
+  return new Date(t).toLocaleDateString(lang);
 }
 function dotColor(h) {
   const m = h.what.match(/#[0-9a-f]{6}/i); if (m) return m[0];
   const k = h.what.match(/(\d+) K/); if (k) return hex(...kelvin(+k[1]));
-  return h.what.startsWith('vypnul') ? '#000' : '#ffd29a';
+  return /^(vypnul|turned off)/.test(h.what) ? '#000' : '#ffd29a';
 }
 
 async function load() {
   try {
-    const s = await (await fetch('/api/state', { cache: 'no-store' })).json();
+    const s = await (await fetch('/api/state', { cache: 'no-store', headers: { 'X-Lang': lang } })).json();
     if (s.wait > until - Date.now()) until = Date.now() + s.wait;
     isAdmin = s.me === 'admin'; if (s.chat) renderChat(s.chat);
     offline = !s.online || !s.bulbOk;
     $('alert').hidden = !offline; $('cool').hidden = offline;
-    if (!s.online) $('alert').innerHTML = '🔌 Lafeho počítač je vypnutý<small>Žárovku teď nejde ovládat. Zkus to později.</small>';
-    else if (!s.bulbOk) $('alert').innerHTML = '💡 Žárovka neodpovídá<small>Nejspíš je vypnutá vypínačem. Zkus to později.</small>';
+    if (!s.online) $('alert').innerHTML = t('pcOff');
+    else if (!s.bulbOk) $('alert').innerHTML = t('bulbOff');
     if (offline) {
       root.setProperty('--lit', 0);
       $('status').innerHTML = '<b>Offline</b>';
@@ -283,16 +335,16 @@ async function load() {
       let rgb = s.r != null && (s.r || s.g || s.b) ? [s.r, s.g, s.b] : s.temp ? kelvin(s.temp) : [255, 200, 120];
       root.setProperty('--glow', rgb.join(','));
       root.setProperty('--lit', s.state ? Math.max(.35, (s.dimming || 100) / 100) : 0);
-      $('status').innerHTML = s.state && s.sceneId && SCENE_NAMES[s.sceneId] ? '<b>' + SCENE_NAMES[s.sceneId] + '</b>' : s.state ? '<b>Svítí</b> na ' + (s.dimming || 100) + ' %' : '<b>Zhasnuto</b>';
+      $('status').innerHTML = s.state && s.sceneId && SCENE_NAMES[s.sceneId] ? '<b>' + SCENE_NAMES[s.sceneId] + '</b>' : s.state ? t('lit') + (s.dimming || 100) + ' %' : t('dark');
       $('onBtn').classList.toggle('on', !!s.state);
     }
     $('log').innerHTML = s.log && s.log.length ? s.log.map(h =>
       '<li><span class="f" title="' + esc(h.cc) + '">' + h.flag + '</span>' +
       '<div><div class="w"><span class="dot" style="background:' + dotColor(h) + '"></span>' + esc(h.what) + '</div>' +
       '<div class="ip' + (h.admin ? ' adm' : '') + '">' + esc(h.ip) + '</div></div>' +
-      '<time datetime="' + esc(h.t) + '" title="' + new Date(h.t).toLocaleString('cs') + '">' + ago(h.t) + '</time></li>').join('')
-      : '<li class="empty">Zatím nikdo. Buď první.</li>';
-  } catch { $('status').textContent = 'Nedaří se načíst stav. Zkouším to dál.'; }
+      '<time datetime="' + esc(h.t) + '" title="' + new Date(h.t).toLocaleString(lang) + '">' + ago(h.t) + '</time></li>').join('')
+      : '<li class="empty">' + t('logEmpty') + '</li>';
+  } catch { $('status').textContent = t('loadErr'); }
   tick();
 }
 let lastChatId = '', isAdmin = false;
@@ -302,13 +354,13 @@ function renderChat(list) {
   if (key === lastChatId) return; lastChatId = key;
   box.innerHTML = list.length ? list.map(m =>
     '<li><span class="f" title="' + esc(m.cc) + '">' + m.flag + '</span><div><span class="n' + (m.admin ? ' adm' : '') + '">' + esc(m.name) + '</span> <span class="x">' + esc(m.text) + '</span></div>' +
-    '<span><time title="' + new Date(m.t).toLocaleString('cs') + '">' + ago(m.t) + '</time>' + (isAdmin ? ' <button class="del" data-id="' + esc(m.id) + '" title="Smazat">✕</button>' : '') + '</span></li>').join('')
-    : '<li class="empty">Zatím ticho. Napiš první zprávu.</li>';
+    '<span><time title="' + new Date(m.t).toLocaleString(lang) + '">' + ago(m.t) + '</time>' + (isAdmin ? ' <button class="del" data-id="' + esc(m.id) + '" title="' + t('del') + '">✕</button>' : '') + '</span></li>').join('')
+    : '<li class="empty">' + t('chatEmpty') + '</li>';
   if (atBottom || !box.dataset.init) { box.scrollTop = box.scrollHeight; box.dataset.init = 1; }
 }
 $('msgs').addEventListener('click', async e => {
   const id = e.target.dataset && e.target.dataset.id; if (!id) return;
-  await fetch('/api/chat/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
+  await fetch('/api/chat/delete', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Lang': lang }, body: JSON.stringify({ id }) });
   load();
 });
 try { $('nick').value = localStorage.getItem('nick') || ''; } catch {}
@@ -317,12 +369,14 @@ $('chatForm').addEventListener('submit', async e => {
   const text = $('msg').value.trim(); if (!text) return;
   try { localStorage.setItem('nick', $('nick').value); } catch {}
   try {
-    const r = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: $('nick').value, text }) });
+    const r = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Lang': lang }, body: JSON.stringify({ name: $('nick').value, text }) });
     const j = await r.json();
     $('chatErr').textContent = j.error || '';
     if (!j.error) { $('msg').value = ''; $('msgs').dataset.init = ''; load(); }
-  } catch { $('chatErr').textContent = 'Zprávu se nepodařilo odeslat. Zkus to znovu.'; }
+  } catch { $('chatErr').textContent = t('chatFail'); }
 });
+$('lang').addEventListener('click', () => { lang = lang === 'cs' ? 'en' : 'cs'; try { localStorage.setItem('lang', lang); } catch {} sceneNames(); applyLang(); load(); });
+sceneNames(); applyLang();
 load(); setInterval(load, 5000);
 </script>
 </body>

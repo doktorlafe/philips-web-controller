@@ -39,6 +39,8 @@ function flush() {
 }
 const SCENES = {1:'Oceán',2:'Romantika',3:'Západ slunce',4:'Párty',5:'Krb',6:'Útulno',7:'Les',8:'Pastelky',9:'Probuzení',10:'Na spaní',11:'Teplá bílá',12:'Denní světlo',13:'Studená bílá',14:'Noční světlo',15:'Soustředění',16:'Relax',17:'Pravé barvy',18:'TV',19:'Pro rostliny',20:'Jaro',21:'Léto',22:'Podzim',23:'Hlubina',24:'Džungle',25:'Mojito',26:'Klub',27:'Vánoce',28:'Halloween',29:'Svíčka',30:'Zlatá bílá',31:'Pulz',32:'Steampunk'};
 const EFFECTS = { rainbow: 'Duha', strobe: 'Stroboskop', police: 'Policie', breathe: 'Dýchání' };
+const SCENES_EN = {1:'Ocean',2:'Romance',3:'Sunset',4:'Party',5:'Fireplace',6:'Cozy',7:'Forest',8:'Pastel colors',9:'Wake up',10:'Bedtime',11:'Warm white',12:'Daylight',13:'Cool white',14:'Night light',15:'Focus',16:'Relax',17:'True colors',18:'TV time',19:'Plant growth',20:'Spring',21:'Summer',22:'Fall',23:'Deep dive',24:'Jungle',25:'Mojito',26:'Club',27:'Christmas',28:'Halloween',29:'Candlelight',30:'Golden white',31:'Pulse',32:'Steampunk'};
+const EFFECTS_EN = { rainbow: 'Rainbow', strobe: 'Strobe', police: 'Police', breathe: 'Breathing' };
 // stav od agenta: jen čísla/boolean ze známých polí (ochrana proti XSS, kdyby někdo ukradl klíč agenta)
 function cleanState(x) {
   const o = {};
@@ -59,15 +61,15 @@ function sanitize(c) {
   if (EFFECTS[c.effect]) { p.state = true; p.effect = c.effect; }
   return Object.keys(p).length ? p : null;
 }
-function describe(p) {
-  if (p.state === false) return 'vypnul/a';
-  if (p.effect) return 'efekt ' + EFFECTS[p.effect];
-  if (p.sceneId) return 'scéna ' + SCENES[p.sceneId];
+function describe(p, en) {
+  if (p.state === false) return en ? 'turned off' : 'vypnul/a';
+  if (p.effect) return en ? 'effect ' + EFFECTS_EN[p.effect] : 'efekt ' + EFFECTS[p.effect];
+  if (p.sceneId) return en ? 'scene ' + SCENES_EN[p.sceneId] : 'scéna ' + SCENES[p.sceneId];
   const a = [];
-  if (p.r != null) a.push('barva #' + [p.r, p.g, p.b].map(v => v.toString(16).padStart(2, '0')).join(''));
-  if (p.dimming != null) a.push('jas ' + p.dimming + ' %');
-  if (p.temp != null) a.push('bílá ' + p.temp + ' K');
-  return a.length ? a.join(', ') : 'zapnul/a';
+  if (p.r != null) a.push((en ? 'colour #' : 'barva #') + [p.r, p.g, p.b].map(v => v.toString(16).padStart(2, '0')).join(''));
+  if (p.dimming != null) a.push((en ? 'brightness ' : 'jas ') + p.dimming + ' %');
+  if (p.temp != null) a.push((en ? 'white ' : 'bílá ') + p.temp + ' K');
+  return a.length ? a.join(', ') : en ? 'turned on' : 'zapnul/a';
 }
 const maskIp = ip => ip.includes(':') ? ip.split(':').slice(0, 3).join(':') + ':…' : ip.replace(/\.\d+$/, '.x');
 const flag = cc => /^[A-Z]{2}$/.test(cc) && cc !== 'XX' && cc !== 'T1' ? String.fromCodePoint(...[...cc].map(ch => 0x1F1A5 + ch.charCodeAt(0))) : '🏳️';
@@ -89,17 +91,18 @@ http.createServer(async (req, res) => {
   const ip = (req.headers['cf-connecting-ip'] || req.socket.remoteAddress || '').replace(/^::ffff:/, '');
   const cc = (req.headers['cf-ipcountry'] || 'XX').toUpperCase();
   const url = new URL(req.url, 'http://x');
+  const en = req.headers['x-lang'] === 'en';
   if (req.method === 'GET' && url.pathname === '/') { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(PAGE); }
   if (req.method === 'GET' && IMG[url.pathname]) { res.writeHead(200, { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=86400' }); return res.end(IMG[url.pathname]); }
   if (req.method === 'GET' && url.pathname === '/api/state') {
     const wait = exempt(ip) ? 0 : Math.max(0, (lastAction.get(rateKey(ip)) || 0) + COOLDOWN - Date.now());
-    return json(res, 200, { ...state, online: Date.now() - lastAgentSeen < 20000, bulbOk: Date.now() - lastStateAt < 70000, wait, me: exempt(ip) ? 'admin' : null, chat: chat.slice(-50).map(m => ({ id: m.id, t: m.t, flag: flag(m.cc), cc: m.cc, name: exempt(m.ip) ? 'lafe' : m.name, admin: exempt(m.ip), text: m.text })), log: history.slice(-30).reverse().map(h => ({ t: h.t, flag: flag(h.cc), cc: h.cc, ip: h.src === 'n8n' ? '🤖 automatizace n8n' : exempt(h.ip) ? 'lafe · admin' : maskIp(h.ip), admin: exempt(h.ip) || h.src === 'n8n', what: h.what })) });
+    return json(res, 200, { ...state, online: Date.now() - lastAgentSeen < 20000, bulbOk: Date.now() - lastStateAt < 70000, wait, me: exempt(ip) ? 'admin' : null, chat: chat.slice(-50).map(m => ({ id: m.id, t: m.t, flag: flag(m.cc), cc: m.cc, name: exempt(m.ip) ? 'lafe' : m.name, admin: exempt(m.ip), text: m.text })), log: history.slice(-30).reverse().map(h => ({ t: h.t, flag: flag(h.cc), cc: h.cc, ip: h.src === 'n8n' ? (en ? '🤖 n8n automation' : '🤖 automatizace n8n') : exempt(h.ip) ? 'lafe · admin' : maskIp(h.ip), admin: exempt(h.ip) || h.src === 'n8n', what: en && h.cmd ? describe(h.cmd, true) : h.what })) });
   }
   if (req.method === 'POST' && url.pathname === '/api/chat') {
     const k = rateKey(ip), w = exempt(ip) ? 0 : (lastChat.get(k) || 0) + CHAT_GAP - Date.now();
-    if (w > 0) return json(res, 429, { error: 'Pomaleji, další zpráva za ' + Math.ceil(w / 1000) + ' s' });
+    if (w > 0) return json(res, 429, { error: (en ? 'Slow down, next message in ' : 'Pomaleji, další zpráva za ') + Math.ceil(w / 1000) + ' s' });
     const b = await body(req), text = cleanText(b.text, 300), name = cleanText(b.name, 24) || 'Anonym';
-    if (!text) return json(res, 400, { error: 'Napiš nějakou zprávu' });
+    if (!text) return json(res, 400, { error: en ? 'Write a message' : 'Napiš nějakou zprávu' });
     lastChat.set(k, Date.now());
     const m = { id: crypto.randomBytes(6).toString('hex'), t: new Date().toISOString(), ip, cc, name, text };
     chat.push(m); if (chat.length > 100) chat.shift();
@@ -109,7 +112,7 @@ http.createServer(async (req, res) => {
     return json(res, 200, { ok: true });
   }
   if (req.method === 'POST' && url.pathname === '/api/chat/delete') {
-    if (!exempt(ip)) return json(res, 403, { error: 'Jen pro admina' });
+    if (!exempt(ip)) return json(res, 403, { error: en ? 'Admin only' : 'Jen pro admina' });
     const id = String((await body(req)).id || '');
     chat = chat.filter(m => m.id !== id);
     fs.appendFile(CHAT, JSON.stringify({ del: id }) + '\n', () => {});
@@ -117,9 +120,9 @@ http.createServer(async (req, res) => {
   }
   if (req.method === 'POST' && url.pathname === '/api/cmd') {
     const wait = exempt(ip) ? 0 : (lastAction.get(rateKey(ip)) || 0) + COOLDOWN - Date.now();
-    if (wait > 0) return json(res, 429, { error: 'Další akce až za ' + Math.ceil(wait / 1000) + ' s', wait });
+    if (wait > 0) return json(res, 429, { error: (en ? 'Next action in ' : 'Další akce až za ') + Math.ceil(wait / 1000) + ' s', wait });
     const p = sanitize(await body(req));
-    if (!p) return json(res, 400, { error: 'Neplatný příkaz' });
+    if (!p) return json(res, 400, { error: en ? 'Invalid command' : 'Neplatný příkaz' });
     lastAction.set(rateKey(ip), Date.now());
     act(p, { ip, cc, ua: req.headers['user-agent'] });
     return json(res, 200, { ok: true, wait: exempt(ip) ? 0 : COOLDOWN });
@@ -128,7 +131,7 @@ http.createServer(async (req, res) => {
   if (req.method === 'POST' && url.pathname === '/internal/cmd') {
     if (!internalOk(req)) return json(res, 403, { error: 'bad key' });
     const p = sanitize(await body(req));
-    if (!p) return json(res, 400, { error: 'Neplatný příkaz' });
+    if (!p) return json(res, 400, { error: en ? 'Invalid command' : 'Neplatný příkaz' });
     act(p, { ip: 'n8n', cc: 'XX', src: 'n8n' });
     return json(res, 200, { ok: true });
   }
