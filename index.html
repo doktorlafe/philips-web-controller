@@ -248,6 +248,7 @@ const I18N = {
 };
 let lang = 'cs';
 try { lang = localStorage.getItem('lang') || (/^cs|^sk/i.test(navigator.language) ? 'cs' : 'en'); } catch {}
+if (!I18N[lang]) lang = 'cs';
 const t = k => I18N[lang][k] ?? I18N.cs[k];
 const SCENE_NAMES = {};
 function applyLang() {

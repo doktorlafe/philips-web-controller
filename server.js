@@ -58,7 +58,7 @@ function sanitize(c) {
   if (/^#[0-9a-f]{6}$/i.test(c.color || '')) { p.r = parseInt(c.color.slice(1, 3), 16); p.g = parseInt(c.color.slice(3, 5), 16); p.b = parseInt(c.color.slice(5, 7), 16); }
   if (Number.isFinite(c.temp)) p.temp = Math.max(2200, Math.min(6500, Math.round(c.temp)));
   if (Number.isInteger(c.scene) && SCENES[c.scene]) { p.state = true; p.sceneId = c.scene; p.speed = Number.isFinite(c.speed) ? Math.max(20, Math.min(200, Math.round(c.speed))) : 100; }
-  if (EFFECTS[c.effect]) { p.state = true; p.effect = c.effect; }
+  if (typeof c.effect === 'string' && Object.hasOwn(EFFECTS, c.effect)) { p.state = true; p.effect = c.effect; }
   return Object.keys(p).length ? p : null;
 }
 function describe(p, en) {
